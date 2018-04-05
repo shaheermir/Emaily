@@ -24,5 +24,5 @@ app.use(passport.session())
 
 require('./routes/authRoutes')(app)
 
-const PORT = process.env.PORT || 3000
+const PORT = keys.port
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}.`))
