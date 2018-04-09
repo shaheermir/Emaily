@@ -2,12 +2,9 @@ import materializeCSS from 'materialize-css/dist/css/materialize.min.css'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { createStore, applyMiddleware } from 'redux'
 
 import App from './components/App'
-import RootReducer from './reducers'
-
-const store = createStore(RootReducer, applyMiddleware())
+import store from './config/store'
 
 ReactDOM.render(
   <Provider store={store}>
