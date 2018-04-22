@@ -1,6 +1,7 @@
 const { URL } = require('url')
 const { Path } = require('path-parser')
 const mongoose = require('mongoose')
+const _ = require('lodash')
 
 const Mailer = require('../services/Mailer')
 const requireLogin = require('../middlewares/requireLogin')
@@ -15,17 +16,21 @@ module.exports = app => {
   })
 
   app.post('/api/surveys/webhooks', (req, res) => {
-    const events = req.body.map(({ url, email }) => {
-      const pathname = new URL(url).pathname
-      const p = new Path('/api/surveys/:surveyID/:choice')
-      const match = p.test(pathname)
+    const p = new Path('/api/surveys/:surveyID/:choice')
 
-      if (match) {
-        return { email, surveyID: match.surveyID, choice: match.choice }
-      }
-    })
+    const events = _.chain(req.body)
+      .map(({ url, email }) => {
+        const match = p.test(new URL(url).pathname)
 
-    console.log(events)
+        if (match) {
+          return { email, surveyID: match.surveyID, choice: match.choice }
+        }
+      })
+      .compact()
+      .uniqBy('email', 'surveyID')
+      .value()
+
+    res.send({})
   })
 
   app.post('/api/surveys', requireLogin, requireCredits, async (req, res) => {
